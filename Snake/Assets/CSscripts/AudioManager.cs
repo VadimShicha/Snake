@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Audio;
 using UnityEngine;
 
+[System.Serializable]
 public class AudioContainer
 {
 	public string name;
@@ -37,5 +38,7 @@ public class AudioManager : MonoBehaviour
 
 		instance.audioSource.clip = container.clip;
 		instance.audioSource.volume = container.volume;
+
+		instance.audioSource.Play();
 	}
 }

@@ -590,12 +590,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 288134213}
-  audioContainers:
+  containers:
   - name: Eat
-    audio: {fileID: 8300000, guid: 716e4c5ffebe62742a8cb5bb4e6c5461, type: 3}
-    volume: 0.75
+    clip: {fileID: 8300000, guid: 716e4c5ffebe62742a8cb5bb4e6c5461, type: 3}
+    volume: 1
   - name: GameOver
-    audio: {fileID: 8300000, guid: a2543b3ec314ad74386f3f90b7e30eb4, type: 3}
+    clip: {fileID: 8300000, guid: a2543b3ec314ad74386f3f90b7e30eb4, type: 3}
     volume: 1
 --- !u!82 &288134213
 AudioSource:

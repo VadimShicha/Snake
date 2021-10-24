@@ -53,8 +53,11 @@ public class Main : MonoBehaviour
 
 		if(xAxisInput != 0 ^ yAxisInput != 0)
 		{
-			movePos.x = xAxisInput;
-			movePos.y = yAxisInput;
+			if(movePos.x != -xAxisInput || movePos.y != -yAxisInput)
+			{
+				movePos.x = xAxisInput;
+				movePos.y = yAxisInput;
+			}
 		}
 
 		if(Input.GetKeyDown(KeyCode.Escape))
