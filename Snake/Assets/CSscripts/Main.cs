@@ -3,13 +3,19 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine;
+using TMPro;
 
 public class Main : MonoBehaviour
 {
 	public GameObject snakeHead;
 	public GameObject snakeBody;
+
+	public GameObject deathUI;
+	public GameObject pausedUI;
+	public TMP_Text deathUIScoreText;
 
 	public Tilemap groundTilemap;
 	public Tilemap appleTilemap;
@@ -22,13 +28,15 @@ public class Main : MonoBehaviour
 
 	public List<GameObject> snakeBodies = new List<GameObject>();
 
-	public int startSize = 5;
 	public float moveRate = 0.1f;
 
-	int snakeSize = 5;
+	const int startSize = 5;
+
+	int snakeSize = startSize;
+	bool paused = false;
 
 	GameObject player;
-	Vector3 movePos;
+	Vector3 movePos = Vector3.up;
 
 	void Awake()
 	{
@@ -48,11 +56,49 @@ public class Main : MonoBehaviour
 			movePos.x = xAxisInput;
 			movePos.y = yAxisInput;
 		}
+
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
+			togglePause();
+		}
+	}
+
+	public void replay()
+	{
+		print("Reset");
+		Time.timeScale = 1;
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
+
+	public void togglePause()
+	{
+		if(paused == true)
+		{
+			print("Resumed");
+			Time.timeScale = 1;
+			pausedUI.SetActive(false);
+			paused = false;
+		}
+		else if(paused == false)
+		{
+			print("Paused");
+			Time.timeScale = 0;
+			pausedUI.SetActive(true);
+
+			paused = true;
+		}
 	}
 
 	void youDied()
 	{
 		print("You Died!");
+		Time.timeScale = 0;
+
+		deathUIScoreText.text = "Score: " + (snakeSize - startSize);
+
+		deathUI.SetActive(true);
+
+		AudioManager.play("GameOver");
 	}
 
 	void spawnApple()
@@ -71,9 +117,6 @@ public class Main : MonoBehaviour
 
 		for(int i = snakeBodyLength - 1; i >= 0; i--)
 		{
-			if(snakeHeadPos == snakeBodies[i].transform.position)
-				youDied();
-			
 			if(i == 0)
 				snakeBodies[i].transform.position = snakeHead.transform.position;
 			else
@@ -85,14 +128,20 @@ public class Main : MonoBehaviour
 		//update position
 		snakeHeadPos = Vector3Int.RoundToInt(snakeHead.transform.position);
 
+
+		//check if the snake is touching a snake body piece
+		for(int i = 0; i < snakeBodyLength; i++)
+		{
+			Vector3Int snakeBodyPos = Vector3Int.RoundToInt(snakeBodies[i].transform.position);
+
+			if(snakeHeadPos == snakeBodyPos)
+				youDied();
+		}
+
+		//check if the snake is touching the border
 		if(groundTilemap.GetTile(snakeHeadPos) == borderTile)
 			youDied();
 
-		const int GAZILLION = 999999999;
-		for(int i = 0; i < GAZILLION; i++)
-		{
-			print("Vadim is a noob!");
-		}
 
 		if(appleTilemap.GetTile(snakeHeadPos) == appleTile)
 		{
@@ -108,6 +157,7 @@ public class Main : MonoBehaviour
 			snakeBodies.Add(snakeBodyClone);
 
 			spawnApple();
+			AudioManager.play("Eat");
 		}
 	}
 }
